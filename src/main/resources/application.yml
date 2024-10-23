@@ -1,18 +1,34 @@
+server:
+  port: 8080
+
 spring:
   application:
-    name: yaprofi-app
+    name: yaprofi
   datasource:
-    url: jdbc:postgresql://localhost:5432/yaprofi_db
-    username: postgres
-    password: postgres
     driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/yaprofi_DB
+    username: ${postgresql.username}
+    password: ${postgresql.password}
   jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-server:
-  port: 8080
+        show_sql: false
+  #http-put-patch-delete
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+  liquibase:
+    change-log: db/changelog/changelog_master.xml
+    default-schema: public
+springdoc:
+  api-docs:
+    path: /generated-openapi
+    version: openapi_3_0
+  swagger-ui:
+    path: /swagger-ui
+    tagsSorter: alpha
+  show-login-endpoint: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
