@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  client-backend:
+    image: yaprofi-0.0.1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      - postgresql.username = nikita
+      - postgresql.password = nikita
+
+  postgres:
+    container_name: postgres
+    image: postgres:16
+    environment:
+      POSTGRES_DB: "yaprofi_DB"
+      POSTGRES_USER: "nikita"
+      POSTGRES_PASSWORD: "nikita"
+    ports:
+      - "5432:5432"
