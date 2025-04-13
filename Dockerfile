@@ -1,10 +1,14 @@
-FROM maven:3.8.4-openjdk-17 as builder
+# Build stage
+FROM gradle:8.7-jdk21 AS build
 WORKDIR /app
-COPY . /app/.
-RUN mvn -f /app/pom.xml clean package -Dmaven.test.skip=true
+COPY build.gradle.kts settings.gradle.kts ./
+COPY --chown=gradle:gradle . .
+RUN gradle dependencies --refresh-dependencies && \
+    gradle build -x test --no-daemon
 
-FROM eclipse-temurin:17-jre-alpine
+# Run stage
+FROM openjdk:21-jdk-slim
 WORKDIR /app
-COPY --from=builder /app/target/*.jar /app/*.jar
+COPY --from=build /app/build/libs/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/app/*.jar"]
+CMD ["java", "-jar", "app.jar"]
